@@ -59,4 +59,4 @@ Xây dựng hệ thống nhận diện khuôn mặt real-time từ video, sử d
 - DeepFace (embedding & nhận diện)
 - OpenCV (xử lý ảnh/video)
 - PyQt5 (giao diện)
-- Python 3.10+
+- Python 3.9
