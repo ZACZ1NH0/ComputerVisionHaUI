@@ -1,24 +1,43 @@
+## 📂 Project Structure
+
+```text
 face_recognition_project/
-├── src/                          # Mã nguồn chính
-│   ├── preprocessing/            # 🧼 Dev 1: Tiền xử lý ảnh với YOLOv8
-│   ├── embeddings/               # 🧠 Dev 2: Trích xuất & so sánh embeddings (DeepFace)
-│   ├── detection/                # 👁️ Dev 3: Phát hiện khuôn mặt (YOLOv8)
-│   ├── recognition/              # 🧾 Dev 4: Nhận diện khuôn mặt (DeepFace)
-│   ├── video_processing/         # 🎥 Dev 5: Xử lý video & phân tích (real-time)
-│   ├── gui/                      # 🖥️ Dev 6: Giao diện người dùng (PyQt5)
-│   └── config/                   # ⚙️ Cấu hình chung của hệ thống
-├── data/                         # 📂 Dữ liệu (không commit lên Git)
-│   ├── raw/                      # Ảnh gốc theo từng người
-│   ├── processed/                # Ảnh đã cắt & resize (160x160)
-│   ├── embeddings/               # Embeddings đã trích xuất (.npz)
+├── src/                          # Source code
+│   ├── preprocessing/            # Module Dev 1: Tiền xử lý dữ liệu (YOLOv8)
+│   │   ├── preprocess.py         # Tiền xử lý ảnh
+│   │   └── utils.py              # Hàm hỗ trợ (resize, kiểm tra ảnh)
+│   ├── embeddings/               # Module Dev 2: Trích xuất & so sánh embeddings
+│   │   ├── extract_embeddings.py # Trích xuất embeddings (DeepFace)
+│   │   └── compare_embeddings.py # So sánh embeddings
+│   ├── detection/                # Module Dev 3: Phát hiện khuôn mặt
+│   │   ├── detect_faces.py       # Phát hiện khuôn mặt (YOLOv8)
+│   │   └── utils.py              # Hàm hỗ trợ (tọa độ, cắt ảnh)
+│   ├── recognition/              # Module Dev 4: Nhận diện khuôn mặt
+│   │   ├── recognize_faces.py    # Nhận diện danh tính (DeepFace)
+│   │   └── utils.py              # Xử lý lỗi nhận diện
+│   ├── video_processing/         # Module Dev 5: Xử lý & phân tích video
+│   │   ├── process_video.py      # Xử lý video real-time
+│   │   ├── analyze_results.py    # Phân tích kết quả (đếm, theo dõi)
+│   │   └── utils.py              # Hàm hỗ trợ (lưu CSV, theo dõi tọa độ)
+│   ├── gui/                      # Module Dev 6: Giao diện người dùng
+│   │   ├── main_app.py           # Giao diện PyQt5 chính
+│   │   ├── interface.py          # Định nghĩa giao diện
+│   │   └── utils.py              # Hỗ trợ hiển thị, vẽ khung, video
+│   └── config/                   # Cấu hình chung
+│       ├── config.py             # Tham số toàn cục
+│       └── __init__.py           # File khởi tạo package
+├── data/                         # Dữ liệu gốc và xử lý (KHÔNG commit)
+│   ├── raw/                      # Ảnh gốc theo người
+│   ├── processed/                # Ảnh đã cắt (160x160)
+│   ├── embeddings/               # File .npz chứa embeddings
 │   ├── videos/                   # Video đầu vào
-│   └── results/                  # Kết quả: ảnh, video, file CSV phân tích
-├── docs/                         # 📄 Tài liệu dự án
+│   └── results/                  # Kết quả: ảnh, video, CSV phân tích
+├── docs/                         # Tài liệu đi kèm
 │   ├── README.md                 # Hướng dẫn sử dụng
-│   ├── workflow.md               # Chi tiết quy trình
-│   └── report.pdf                # Báo cáo cuối kỳ
-├── tests/                        # 🧪 Test cho từng module (tùy chọn)
-├── requirements.txt              # 🧷 Thư viện cần thiết
-├── main.py                       # 🚀 Chạy toàn bộ hệ thống
-├── .gitignore                    # 🛑 Bỏ qua dữ liệu lớn/không cần thiết
-└── LICENSE                       # 📜 Giấy phép sử dụng (nếu có)
+│   ├── workflow.md               # Mô tả quy trình hệ thống
+│   └── report.pdf                # Báo cáo bài tập lớn
+├── tests/                        # Các file kiểm thử (unit test)
+├── requirements.txt              # Thư viện cần cài đặt
+├── main.py                       # File chạy chính cho toàn hệ thống
+├── .gitignore                    # Loại trừ dữ liệu không cần track
+└── LICENSE                       # Giấy phép sử dụng (tùy chọn)
