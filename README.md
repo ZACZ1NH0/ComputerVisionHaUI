@@ -41,3 +41,39 @@ face_recognition_project/
 ├── main.py                       # File chạy chính cho toàn hệ thống
 ├── .gitignore                    # Loại trừ dữ liệu không cần track
 └── LICENSE                       # Giấy phép sử dụng (tùy chọn)
+
+
+```
+
+
+
+
+
+
+
+### 1. 📥 Clone dự án
+
+```bash
+git clone https://github.com/ZACZ1NH0/BookStation.git
+```
+### 2. 🐍 Tạo môi trường ảo với Python 3.11 (nếu chưa tạo)
+
+> ⚠️ Đảm bảo bạn đã cài Python 3.9 trước đó.
+
+```bash
+py -3.9 -m venv venv
+```
+
+Kích hoạt môi trường ảo:
+
+- **Windows (CMD):**
+
+```cmd
+.\venv\Scripts\activate
+```
+
+### 3. 📦 Cài đặt các thư viện phụ thuộc
+
+```bash
+pip install -r requirements.txt
+```
