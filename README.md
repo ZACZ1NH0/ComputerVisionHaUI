@@ -56,7 +56,7 @@ face_recognition_project/
 ```bash
 git clone https://github.com/ZACZ1NH0/ComputerVisionHaUI.git
 ```
-### 2. 🐍 Tạo môi trường ảo với Python 3.11 (nếu chưa tạo)
+### 2. 🐍 Tạo môi trường ảo với Python 3.9 (nếu chưa tạo)
 
 > ⚠️ Đảm bảo bạn đã cài Python 3.9 trước đó.
 
