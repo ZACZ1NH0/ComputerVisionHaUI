@@ -1,1 +1,14 @@
-
+# Dữ liệu
+data/
+# Môi trường ảo
+face_recognition_env/
+# File tạm
+*.pyc
+__pycache__/
+*.npz
+*.jpg
+*.mp4
+*.csv
+# IDE
+.idea/
+.vscode/
