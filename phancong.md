@@ -9,7 +9,7 @@ Xây dựng hệ thống nhận diện khuôn mặt real-time từ video, sử d
 
 | Dev | Module | Nhiệm vụ chính |
 |-----|--------|----------------|
-| **Dev 1** | Tiền xử lý (Preprocessing) | - Phát hiện & cắt khuôn mặt từ 500 ảnh bằng YOLOv8<br> - Chuẩn hóa kích thước 160x160 pixel<br> - Lưu vào `dataset/person1/`<br> - Xử lý lỗi ảnh không hợp lệ |
+| **Dev 1** | Tiền xử lý (Preprocessing) | - Phát hiện & cắt khuôn mặt từ 500 ảnh bằng YOLOv8<br> - Chuẩn hóa kích thước 160x160 pixel<br> - Lưu vào `data/processed/person1/`<br> - Xử lý lỗi ảnh không hợp lệ |
 | **Dev 2** | Trích xuất Embeddings | - Dùng DeepFace để trích xuất embeddings từ ảnh<br> - Lưu vào `person1_embeddings.npz`<br> - Viết hàm so sánh embeddings<br> - Test độ chính xác trên mẫu nhỏ |
 | **Dev 3** | Phát hiện khuôn mặt (Detection) | - Viết hàm phát hiện mặt từ ảnh/video bằng YOLOv8<br> - Xử lý trường hợp khó: mặt nhỏ, nghiêng, mờ<br> - Trả về ảnh mặt và tọa độ |
 | **Dev 4** | Nhận diện (Recognition) | - So sánh embedding đầu vào với Person 1<br> - Xử lý lỗi embedding không hợp lệ<br> - Trả nhãn (Person 1/Khác) và tọa độ |
