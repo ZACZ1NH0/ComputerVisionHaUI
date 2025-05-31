@@ -1,0 +1,23 @@
+# Thư viện chính cho YOLOv8
+ultralytics==8.0.196
+torch==2.0.1
+torchvision==0.15.2
+numpy==1.23.5
+
+# Thư viện chính cho DeepFace
+deepface==0.0.79
+tensorflow==2.12.0
+keras==2.12.0
+pandas==1.5.3
+
+# Thư viện xử lý ảnh và video
+opencv-python==4.7.0.72
+opencv-contrib-python==4.7.0.72
+
+# Thư viện GUI
+PyQt5==5.15.9
+PyQt5-sip==12.11.0
+
+# Thư viện phụ trợ
+Pillow==9.5.0
+matplotlib==3.7.1
