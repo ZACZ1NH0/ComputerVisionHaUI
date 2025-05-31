@@ -54,7 +54,7 @@ face_recognition_project/
 ### 1. 📥 Clone dự án
 
 ```bash
-git clone https://github.com/ZACZ1NH0/BookStation.git
+git clone https://github.com/ZACZ1NH0/ComputerVisionHaUI.git
 ```
 ### 2. 🐍 Tạo môi trường ảo với Python 3.11 (nếu chưa tạo)
 
