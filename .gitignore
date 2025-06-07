@@ -2,6 +2,7 @@
 data/
 # Môi trường ảo
 face_recognition_env/
+venv/
 # File tạm
 *.pyc
 __pycache__/
@@ -12,3 +13,4 @@ __pycache__/
 # IDE
 .idea/
 .vscode/
+.venv/

@@ -52,7 +52,14 @@ Xây dựng hệ thống nhận diện khuôn mặt real-time từ video, sử d
 | Dev 6 | Giao diện cơ bản hiển thị video, khung, nhãn |
 
 ---
-
+## Lưu ý 
+### Chạy đúng thư mục với đầu ra đầu vào trong data
+```
+python src/preprocessing/preprocess.py --input data/raw/person1/ --output data/processed/person1/
+```
+```
+python src/embeddings/extract_embeddings.py --input data/processed/person1/ --output data/embeddings/person1_embeddings.npz
+```
 ## 🛠️ Công nghệ sử dụng
 
 - YOLOv8 (phát hiện khuôn mặt)
