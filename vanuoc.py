@@ -1,9 +1,3 @@
-# ==============================================================================
-# File: face_toolkit.py (Gợi ý tên file)
-# Mô tả: Một bộ công cụ tất cả trong một để nhận diện khuôn mặt từ ảnh,
-#        video và webcam, được thiết kế để dễ dàng import và sử dụng.
-# ==============================================================================
-
 # --- PHẦN 1: IMPORT CÁC THƯ VIỆN CẦN THIẾT ---
 import cv2  # Thư viện OpenCV, chuyên dùng cho các tác vụ xử lý ảnh và video.
 import numpy as np  # Thư viện NumPy, dùng để làm việc hiệu quả với dữ liệu dạng mảng (ảnh cũng là một dạng mảng).
@@ -14,7 +8,7 @@ import time  # Thư viện Time, dùng để đo thời gian xử lý và tính 
 
 # Đường dẫn tới file model đã được huấn luyện. Bạn có thể thay đổi đường dẫn này.
 # Gợi ý: Dùng model 'n' (nano) như 'yolov8n-face.pt' sẽ cho tốc độ nhanh hơn trên video/webcam.
-MODEL_PATH = 'yolov11l-face.pt'
+MODEL_PATH = 'yolov11n-face.pt'
 
 # Sử dụng khối try...except để bắt lỗi nếu không tìm thấy file model hoặc file bị hỏng.
 try:
