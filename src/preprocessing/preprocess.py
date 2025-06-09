@@ -1,7 +1,6 @@
 import cv2
 import os
 from ultralytics import YOLO
-
 # === Lấy tên người dùng ===
 person_name = input("Nhập tên người dùng đã lưu ảnh ở data/raw: ").strip()
 if not person_name:
@@ -9,10 +8,13 @@ if not person_name:
     exit()
 
 # === Thiết lập đường dẫn ===
-input_folder = os.path.join('data', 'raw', person_name)
-output_folder = os.path.join('data', 'processed', person_name)
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+input_folder = os.path.join(base_dir,'data', 'raw', person_name)
+output_folder = os.path.join(base_dir,'data', 'processed', person_name)
 os.makedirs(output_folder, exist_ok=True)
-
+if not os.path.exists(input_folder):
+    print(f"[X] Thư mục {input_folder} không tồn tại. Vui lòng kiểm tra lại tên hoặc tạo thư mục và thêm ảnh vào.")
+    exit()
 # === Load mô hình YOLOv8 ===
 model = YOLO('yolov8n.pt')  # dùng model nhẹ để demo
 
