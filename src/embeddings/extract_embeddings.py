@@ -3,9 +3,12 @@ import numpy as np
 import pickle
 from deepface import DeepFace
 from tqdm import tqdm
-from src.config .config import PROCESSED_PATH, EMBEDDINGS_PATH , TEST
+import sys
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(f'{base_dir}/src')  # Thêm đúng thư mục chứa module
+from config.config import PROCESSED_PATH, EMBEDDINGS_PATH 
 
-def extract_all_embeddings(processed_root=TEST, save_path=EMBEDDINGS_PATH, model_name="Facenet"):
+def extract_all_embeddings(processed_root=PROCESSED_PATH, save_path=EMBEDDINGS_PATH, model_name="Facenet"):
     """
     Duyệt qua tất cả thư mục con (mỗi người), trích xuất embedding từ từng ảnh,
     gắn nhãn tương ứng và lưu vào file pickle.
@@ -36,3 +39,4 @@ def extract_all_embeddings(processed_root=TEST, save_path=EMBEDDINGS_PATH, model
 # Cho phép chạy trực tiếp
 if __name__ == "__main__":
     extract_all_embeddings()
+
