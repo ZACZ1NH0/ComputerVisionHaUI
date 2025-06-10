@@ -1,234 +1,99 @@
+import os
+import sys
 import cv2
 import numpy as np
-from typing import Tuple, List, Dict, Optional
 import time
-from .utils import draw_face_box, draw_fps, calculate_iou, update_tracking
-from .analyze_results import ResultAnalyzer
+from datetime import datetime
+import logging
+from collections import defaultdict
 
-class VideoProcessor:
-    def __init__(self):
-        """Khởi tạo VideoProcessor với các thành phần cần thiết"""
-        self.face_detector = None  # Sẽ được khởi tạo từ module detection
-        self.face_recognizer = None  # Sẽ được khởi tạo từ module recognition
-        self.tracking_results = {}  # Lưu kết quả theo dõi
-        self.is_processing = False  # Flag để kiểm soát quá trình xử lý
-        self.frame_count = 0  # Đếm số frame đã xử lý
-        self.fps = 0  # FPS hiện tại
-        self.next_face_id = 0  # ID cho khuôn mặt mới
-        self.tracking_threshold = 0.5  # Ngưỡng IoU để tracking
-        self.result_analyzer = ResultAnalyzer()  # Phân tích kết quả
-        
-    def start_processing(self):
-        """Bắt đầu xử lý video"""
-        self.is_processing = True
-        self.frame_count = 0
-        self.fps = 0
-        self.tracking_results = {}  # Reset tracking results
-        self.next_face_id = 0
-        self.result_analyzer.start_session()  # Bắt đầu phiên phân tích
-        
-    def stop_processing(self):
-        """Dừng xử lý video"""
-        self.is_processing = False
-        self.result_analyzer.end_session()  # Kết thúc phiên phân tích
-        
-    def process_camera(self, camera_id: int = 0, callback=None):
-        """
-        Xử lý video từ camera
-        
-        Args:
-            camera_id: ID của camera (mặc định là 0 - webcam)
-            callback: Hàm callback để cập nhật UI
-        """
-        cap = cv2.VideoCapture(camera_id)
-        if not cap.isOpened():
-            raise ValueError(f"Không thể mở camera với ID {camera_id}")
-            
-        self.start_processing()
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(f'{base_dir}/src')
+
+from embeddings.compare_embeddings import compare_embeddings
+from recognition.recognize_faces import load_reference_embeddings, extract_embedding, recognize_faces
+from detection.detect_faces import detect_and_process_faces
+from config.config import THRESHOLD, FACE_DETECTION_CONFIDENCE, VIDEO_PATH, RESULTS_PATH
+
+# Thiết lập logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def process_webcam():
+    """Kết hợp phát hiện + nhận diện khuôn mặt realtime từ webcam"""
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        logger.error("Lỗi: Không thể kết nối với webcam.")
+        return
+
+    logger.info("Webcam đang chạy... Nhấn 'q' để thoát.")
+
+    reference_embeddings, reference_labels = load_reference_embeddings()
+    if reference_embeddings is None or reference_labels is None:
+        logger.error("Không thể load reference embeddings")
+        return
+
+    while True:
         start_time = time.time()
+        ret, frame = cap.read()
+        if not ret:
+            logger.error("Lỗi: Mất kết nối với webcam.")
+            break
+
+        frame = cv2.flip(frame, 1)
+
+        result = detect_and_process_faces(frame, flag=4)
+        if result is None:
+            continue
+
+        coords_dict, frame_with_boxes, faces_dict = result
+        logger.info(f"Phát hiện được {len(faces_dict)} khuôn mặt")
         
-        try:
-            while self.is_processing:
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                    
-                # Xử lý frame
-                processed_frame, results = self.process_frame(frame)
-                
-                # Cập nhật FPS
-                self.frame_count += 1
-                elapsed_time = time.time() - start_time
-                if elapsed_time >= 1.0:
-                    self.fps = self.frame_count / elapsed_time
-                    self.frame_count = 0
-                    start_time = time.time()
-                
-                # Gọi callback nếu có
-                if callback:
-                    callback(processed_frame, results, self.fps)
-                    
-        finally:
-            cap.release()
-            self.stop_processing()
-            
-    def process_video_file(self, video_path: str, callback=None):
-        """
-        Xử lý video từ file
-        
-        Args:
-            video_path: Đường dẫn đến file video
-            callback: Hàm callback để cập nhật UI
-        """
-        cap = cv2.VideoCapture(video_path)
-        if not cap.isOpened():
-            raise ValueError(f"Không thể mở video file: {video_path}")
-            
-        self.start_processing()
-        start_time = time.time()
-        
-        try:
-            while self.is_processing:
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                    
-                # Xử lý frame
-                processed_frame, results = self.process_frame(frame)
-                
-                # Cập nhật FPS
-                self.frame_count += 1
-                elapsed_time = time.time() - start_time
-                if elapsed_time >= 1.0:
-                    self.fps = self.frame_count / elapsed_time
-                    self.frame_count = 0
-                    start_time = time.time()
-                
-                # Gọi callback nếu có
-                if callback:
-                    callback(processed_frame, results, self.fps)
-                    
-        finally:
-            cap.release()
-            self.stop_processing()
-            
-    def process_frame(self, frame: np.ndarray) -> Tuple[np.ndarray, Dict]:
-        """
-        Xử lý một frame video
-        
-        Args:
-            frame: Frame video cần xử lý
-            
-        Returns:
-            Tuple chứa frame đã xử lý và kết quả nhận diện
-        """
-        if self.face_detector is None or self.face_recognizer is None:
-            raise ValueError("Face detector hoặc face recognizer chưa được khởi tạo")
-            
-        # Lưu frame gốc để vẽ kết quả
-        processed_frame = frame.copy()
-        
-        # Phát hiện khuôn mặt
-        face_boxes = self.face_detector.detect(frame)
-        
-        # Lưu kết quả nhận diện
-        results = {
-            'faces': [],
-            'timestamp': time.time()
-        }
-        
-        # Xử lý từng khuôn mặt
-        for box in face_boxes:
-            x1, y1, x2, y2 = box
-            
-            # Cắt khuôn mặt
-            face_img = frame[y1:y2, x1:x2]
-            
-            # Nhận diện khuôn mặt
-            label, confidence = self.face_recognizer.recognize(face_img)
-            
-            # Tracking khuôn mặt
-            face_id = self._track_face(box, label, confidence)
-            
-            # Vẽ kết quả
-            processed_frame = draw_face_box(processed_frame, box, label, confidence)
-            
-            # Lưu kết quả
-            results['faces'].append({
-                'id': face_id,
-                'box': box,
-                'label': label,
-                'confidence': confidence
-            })
+        # Xử lý từng khuôn mặt riêng biệt
+        recog_results = {}
+        for face_id, face_img in faces_dict.items():
+            embedding = extract_embedding(face_img)
+            if embedding is not None:
+                name, score = recognize_faces(embedding, reference_embeddings, reference_labels)
+                logger.info(f"Khuôn mặt {face_id}: {name} ({score:.1f}%)")
+            else:
+                name, score = "Unknown", 0.0
+                logger.warning(f"Không thể trích xuất embedding cho khuôn mặt {face_id}")
+            recog_results[face_id] = (name, score)
+
+        for face_id, (name, score) in recog_results.items():
+            if face_id not in coords_dict:
+                continue
+
+            x1, y1, x2, y2 = coords_dict[face_id]
+            color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
+            label = f"{name} ({score:.1f}%)" if name != "Unknown" else "Unknown"
+
+            cv2.rectangle(frame_with_boxes, (x1, y1), (x2, y2), color, 2)
+            text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
+            cv2.rectangle(frame_with_boxes, (x1, y1 - text_size[1] - 10), 
+                         (x1 + text_size[0], y1), color, -1)
+            cv2.putText(frame_with_boxes, label, (x1, y1 - 5),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
+
+        # Tính FPS
+        processing_time = time.time() - start_time
+        fps = 1 / processing_time if processing_time > 0 else 0
         
         # Vẽ FPS
-        processed_frame = draw_fps(processed_frame, self.fps)
-        
-        # Cập nhật kết quả phân tích
-        self.result_analyzer.update_frame(results)
-        
-        return processed_frame, results
-        
-    def _track_face(self, box: Tuple[int, int, int, int], 
-                   label: str, confidence: float) -> str:
-        """
-        Tracking khuôn mặt dựa trên IoU
-        
-        Args:
-            box: Tọa độ khung
-            label: Nhãn của khuôn mặt
-            confidence: Độ tin cậy
-            
-        Returns:
-            ID của khuôn mặt
-        """
-        timestamp = time.time()
-        
-        # Tìm khuôn mặt có IoU cao nhất
-        max_iou = 0
-        best_match = None
-        
-        for face_id, data in self.tracking_results.items():
-            last_box = data['boxes'][-1]
-            iou = calculate_iou(box, last_box)
-            
-            if iou > max_iou and iou > self.tracking_threshold:
-                max_iou = iou
-                best_match = face_id
-        
-        # Nếu tìm thấy match
-        if best_match is not None:
-            face_id = best_match
-        else:
-            # Tạo ID mới
-            face_id = f"face_{self.next_face_id}"
-            self.next_face_id += 1
-        
-        # Cập nhật tracking
-        self.tracking_results = update_tracking(
-            self.tracking_results,
-            face_id,
-            box,
-            label,
-            confidence,
-            timestamp
-        )
-        
-        return face_id
-        
-    def set_face_detector(self, detector):
-        """Set face detector từ module detection"""
-        self.face_detector = detector
-        
-    def set_face_recognizer(self, recognizer):
-        """Set face recognizer từ module recognition"""
-        self.face_recognizer = recognizer
-        
-    def get_analysis_report(self) -> str:
-        """
-        Lấy báo cáo phân tích
-        
-        Returns:
-            String chứa nội dung báo cáo
-        """
-        return self.result_analyzer.generate_report()
+        fps_text = f"FPS: {int(fps)}"
+        cv2.putText(frame_with_boxes, fps_text, (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+        # Hiển thị frame
+        cv2.imshow("Webcam Face Recognition", frame_with_boxes)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    process_webcam()

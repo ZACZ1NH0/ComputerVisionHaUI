@@ -3,11 +3,15 @@ import numpy as np
 from ultralytics import YOLO
 import time
 import os
+import sys
 
-from src.recognition.recognize_faces import load_reference_embeddings, recognize_faces
+# Thêm đường dẫn gốc vào sys.path
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(f'{base_dir}/src')
 
+from recognition.recognize_faces import load_reference_embeddings, recognize_faces
 
-MODEL_PATH = 'yolov11n-face.pt'
+MODEL_PATH = os.path.join(base_dir, 'yolov11n-face.pt')
 
 try:
     print(f"Đang tải mô hình YOLO từ '{MODEL_PATH}', vui lòng đợi...")
