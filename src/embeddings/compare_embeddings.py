@@ -17,3 +17,4 @@ def compare_embeddings(input_embedding, stored_embeddings, stored_labels, thresh
         best_match = "Unknown"
 
     return best_match, min_dist
+

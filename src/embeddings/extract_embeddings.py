@@ -39,3 +39,4 @@ def extract_all_embeddings(processed_root=PROCESSED_PATH, save_path=EMBEDDINGS_P
 # Cho phép chạy trực tiếp
 if __name__ == "__main__":
     extract_all_embeddings()
+
