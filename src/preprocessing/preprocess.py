@@ -15,12 +15,9 @@ data_dir = os.path.join(BASE_DIR, 'data')
 input_folder = os.path.join(data_dir, 'raw', person_name)
 output_folder = os.path.join(data_dir, 'processed', person_name)
 
-# # === Thiết lập đường dẫn ===
-# input_folder = os.path.join('data', 'raw', person_name)
-# output_folder = os.path.join('data', 'processed', person_name)
-# os.makedirs(output_folder, exist_ok=True)
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder, exist_ok=True)
 
-# === Load mô hình YOLOv8 ===
 model = YOLO('yolov8n.pt')  # dùng model nhẹ để demo
 
 def is_valid_image(image_path):
