@@ -9,14 +9,12 @@ if not person_name:
     exit()
 
 # === Thiết lập đường dẫn ===
-# Sử dụng đường dẫn tuyệt đối dựa theo vị trí file
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-input_folder = os.path.join(project_root, 'data', 'raw', person_name)
-output_folder = os.path.join(project_root, 'data', 'processed', person_name)
+input_folder = os.path.join('data', 'raw', person_name)
+output_folder = os.path.join('data', 'processed', person_name)
 os.makedirs(output_folder, exist_ok=True)
 
 # === Load mô hình YOLOv8 ===
-model = YOLO('yolov11n-face.pt')  # dùng model nhẹ để demo
+model = YOLO('yolov8n.pt')  # dùng model nhẹ để demo
 
 def is_valid_image(image_path):
     try:
