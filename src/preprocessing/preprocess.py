@@ -8,12 +8,16 @@ if not person_name:
     print("[X] Tên không hợp lệ.")
     exit()
 
-# === Thiết lập đường dẫn ===
-input_folder = os.path.join('data', 'raw', person_name)
-output_folder = os.path.join('data', 'processed', person_name)
-os.makedirs(output_folder, exist_ok=True)
+# === Luôn bắt đầu từ thư mục gốc của project ===
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+data_dir = os.path.join(BASE_DIR, 'data')
 
-# === Load mô hình YOLOv8 ===
+input_folder = os.path.join(data_dir, 'raw', person_name)
+output_folder = os.path.join(data_dir, 'processed', person_name)
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder, exist_ok=True)
+
 model = YOLO('yolov8n.pt')  # dùng model nhẹ để demo
 
 def is_valid_image(image_path):

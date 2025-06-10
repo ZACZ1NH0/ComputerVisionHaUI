@@ -15,7 +15,7 @@ SIMILARITY_THRESHOLD = 0.6  # Điều chỉnh theo độ chính xác mong muốn
 def load_reference_embeddings():
     embeddings = {}
     for file in os.listdir(EMBEDDINGS_DIR):
-        if file.endswith(".npz"):
+        if file.endswith(".pkl"):
             data = np.load(os.path.join(EMBEDDINGS_DIR, file))
             for key in data.files:
                 person_name = os.path.splitext(file)[0] + "_" + key  # ví dụ: caonam_0.jpg
