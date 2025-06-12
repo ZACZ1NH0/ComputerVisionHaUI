@@ -93,6 +93,62 @@ def process_webcam():
     cap.release()
     cv2.destroyAllWindows()
 
+def process_picture(picture_path):
+    """
+    Xử lý nhận diện khuôn mặt trên 1 ảnh tĩnh.
+    """
+    reference_embeddings, reference_labels = load_reference_embeddings()
+    if reference_embeddings is None or reference_labels is None:
+        logger.error("Không thể load reference embeddings")
+        return
+
+    image = cv2.imread(picture_path)
+    if image is None:
+        logger.error(f"Không thể mở file ảnh: {picture_path}")
+        return
+
+    result = detect_and_process_faces(image, flag=4)
+    if result is None:
+        logger.warning("Không phát hiện được khuôn mặt nào trong ảnh.")
+        cv2.imshow("Face Recognition", image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        return
+
+    coords_dict, frame_with_boxes, faces_dict = result
+    logger.info(f"Phát hiện được {len(faces_dict)} khuôn mặt")
+
+    recog_results = {}
+    for face_id, face_img in faces_dict.items():
+        embedding = extract_embedding(face_img)
+        if embedding is not None:
+            name, score = recognize_faces(embedding, reference_embeddings, reference_labels)
+            logger.info(f"Khuôn mặt {face_id}: {name} ({score:.1f}%)")
+        else:
+            name, score = "Unknown", 0.0
+            logger.warning(f"Không thể trích xuất embedding cho khuôn mặt {face_id}")
+        recog_results[face_id] = (name, score)
+
+    for face_id, (name, score) in recog_results.items():
+        if face_id not in coords_dict:
+            continue
+
+        x1, y1, x2, y2 = coords_dict[face_id]
+        color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
+        label = f"{name} ({score:.1f}%)" if name != "Unknown" else "Unknown"
+
+        cv2.rectangle(frame_with_boxes, (x1, y1), (x2, y2), color, 2)
+        text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
+        cv2.rectangle(frame_with_boxes, (x1, y1 - text_size[1] - 10),
+                      (x1 + text_size[0], y1), color, -1)
+        cv2.putText(frame_with_boxes, label, (x1, y1 - 5),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2)
+
+    cv2.imshow("Face Recognition", frame_with_boxes)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
 def process_video_file(video_path):
     # Load reference data
     reference_embeddings, reference_labels = load_reference_embeddings()

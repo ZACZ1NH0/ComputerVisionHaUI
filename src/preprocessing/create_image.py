@@ -1,6 +1,6 @@
 import os
 import time
-
+import cv2
 person_name = input("Nhập tên thư mục người dùng (ví dụ: person_thanh): ").strip()
 if not person_name:
     print("[X] Tên không được để trống.")
