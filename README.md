@@ -1,4 +1,15 @@
 # Giao diện 
+### Các thao tác trên ứng dụng
+Giao diện của hệ thống nhận diện khuôn mặt gồm có 6 nút chính: 
+  Create Image – Chụp ảnh theo số lượng. 
+  Preprocess – Xử lý tệp ảnh đã chụp. 
+  Extract Embeddings – trích xuất các vector đặc trưng từ tệp ảnh đã 
+xử lý. 
+  Webcam Recognition – Nhận diện khuôn mặt real-time bằng 
+webcam. 
+  Video Recognition – Nhận diện khuôn mặt qua video. 
+  Image Recognition – Nhận diện khuôn mặt qua ảnh chụp.
+  
 ### Demo với hình ảnh
 <img width="596" height="383" alt="image" src="https://github.com/user-attachments/assets/4aba101b-7236-466d-9e77-df6fd8175626" />
 <img width="574" height="348" alt="image" src="https://github.com/user-attachments/assets/7f965f16-677a-4d61-83c9-4196a797779b" />
