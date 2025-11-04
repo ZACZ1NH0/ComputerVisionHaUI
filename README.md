@@ -1,3 +1,14 @@
+# Giao diện 
+### Demo với hình ảnh
+<img width="596" height="383" alt="image" src="https://github.com/user-attachments/assets/4aba101b-7236-466d-9e77-df6fd8175626" />
+<img width="574" height="348" alt="image" src="https://github.com/user-attachments/assets/7f965f16-677a-4d61-83c9-4196a797779b" />
+
+### Demo với video 
+<img width="518" height="335" alt="image" src="https://github.com/user-attachments/assets/9134257c-613e-445c-a626-555382767309" />
+
+### Demo với webcam
+<img width="452" height="292" alt="image" src="https://github.com/user-attachments/assets/7d60f8ab-430c-482b-8a51-7aaa77aa03a7" />
+
 ## 📂 Project Structure
 
 ```text
