@@ -1,4 +1,6 @@
 # PHẦN MỀM NHẬN DIỆN DANH TÍNH TRONG ĐÁM ĐÔNG SỬ DỤNG YOLO, DEEPFACE VÀ FACENET
+## Link demo
+https://www.youtube.com/watch?si=NLyufAIqVZAT2FeM&v=mTNkzxbUuFQ&feature=youtu.be
 ## Giao diện 
 ### Các thao tác trên ứng dụng
 Giao diện của hệ thống nhận diện khuôn mặt gồm có 6 nút chính: 
